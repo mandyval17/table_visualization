@@ -10,16 +10,16 @@ export default function AnalyticsPanel({ salesData }) {
 
   salesData.forEach(({ region, date, product, sales }) => {
     regionTotals[region] = (regionTotals[region] || 0) + sales;
-    dateTotals[date] = (dateTotals[date] || 0) + sales;
+    dateTotals[date.toISOString().split('T')[0]] = (dateTotals[date] || 0) + sales;
     productTotals[product] = (productTotals[product] || 0) + sales;
   });
   console.log(salesData, regionTotals, dateTotals, productTotals);
 
-  const pieData = { labels: Object.keys(regionTotals), datasets: [{ data: Object.values(regionTotals) }] };
-  const barData = { labels: Object.keys(productTotals), datasets: [{ data: Object.values(productTotals) }] };
+  const pieData = { labels: Object.keys(regionTotals), datasets: [{ label: 'Sales by Region', data: Object.values(regionTotals) }] };
+  const barData = { labels: Object.keys(productTotals), datasets: [{ label: 'Daily Sales', data: Object.values(productTotals) }] };
   const lineData = {
     labels: Object.keys(dateTotals).sort(),
-    datasets: [{ type: 'line', data: Object.keys(dateTotals).sort().map(d => dateTotals[d]), fill: false }]
+    datasets: [{ label: 'Sales by Product', type: 'line', data: Object.keys(dateTotals).sort().map(d => dateTotals[d]), fill: false }]
   };
   console.log(pieData)
 

@@ -1,18 +1,16 @@
-// src/components/SalesDashboard/SalesDashboard.jsx
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import React, { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 
-import AnalyticsPanel from './AnalyticsPanel';
-import DataTablePanel from './DataTablePanel';
-import SaleDialog from './SaleDialog';
-import SummaryCards from './SummaryCards';
+import AnalyticsPanel from './analytics-panel';
+import DataTablePanel from './data-table-panel';
+import SaleDialog from './sale-dialog';
+import SummaryCards from './summary-card';
 
-// your zod sale schema lives in utils.js
 import { Card } from 'primereact/card';
-import Tabs from './tabs';
+import Tabs from './tab';
 import { saleSchema } from './utils';
 
 import 'primeicons/primeicons.css';
@@ -24,9 +22,9 @@ export default function SalesDashboard() {
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
-    region: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.IN }] },
-    product: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.IN }] },
-    sales: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+    region: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+    product: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+    sales: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.GREATER_THAN }] },
   });
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
@@ -38,14 +36,13 @@ export default function SalesDashboard() {
   });
 
   useEffect(() => {
-    // initial mock data
     const data = [
-      { id: uuidv4(), date: '2025-04-25', region: 'North America', product: 'Laptop', sales: 120 },
-      { id: uuidv4(), date: '2025-04-25', region: 'Europe', product: 'Smartphone', sales: 95 },
-      { id: uuidv4(), date: '2025-04-26', region: 'Asia', product: 'Tablet', sales: 75 },
-      { id: uuidv4(), date: '2025-04-26', region: 'North America', product: 'Monitor', sales: 30 },
-      { id: uuidv4(), date: '2025-04-27', region: 'Europe', product: 'Headphones', sales: 45 },
-      { id: uuidv4(), date: '2025-04-27', region: 'Asia', product: 'Camera', sales: 60 },
+      { id: uuidv4(), date: new Date('2025-04-25'), region: 'North America', product: 'Laptop', sales: 120 },
+      { id: uuidv4(), date: new Date('2025-04-25'), region: 'Europe', product: 'Smartphone', sales: 95 },
+      { id: uuidv4(), date: new Date('2025-04-26'), region: 'Asia', product: 'Tablet', sales: 75 },
+      { id: uuidv4(), date: new Date('2025-04-26'), region: 'North America', product: 'Monitor', sales: 30 },
+      { id: uuidv4(), date: new Date('2025-04-27'), region: 'Europe', product: 'Headphones', sales: 45 },
+      { id: uuidv4(), date: new Date('2025-04-27'), region: 'Asia', product: 'Camera', sales: 60 },
     ];
     setSalesData(data);
   }, []);
@@ -54,7 +51,6 @@ export default function SalesDashboard() {
     const newRecord = {
       id: uuidv4(),
       ...form,
-      date: form.date.toISOString().split('T')[0]
     };
     setSalesData(prev => [...prev, newRecord]);
     methods.reset();
@@ -72,10 +68,8 @@ export default function SalesDashboard() {
     <>
       <p className="text-3xl font-bold mb-4 p-4 mt-5">Sales Dashboard</p>
 
-      {/* Summary Cards */}
       <SummaryCards salesData={salesData} />
 
-      {/* Tabs wrapping DataTablePanel and AnalyticsPanel */}
       <Card style={{ boxShadow: '0 6px 12px rgba(0,0,0,0.32), 0 6px 12px rgba(0,0,0,0.46)' }}>
         <div className="mb-10">
           <Tabs>
@@ -95,7 +89,6 @@ export default function SalesDashboard() {
         </div>
       </Card>
 
-      {/* Add-Sale Dialog */}
       <FormProvider {...methods}>
         <SaleDialog
           visible={showDialog}

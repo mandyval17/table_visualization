@@ -1,6 +1,5 @@
-// import './App.css'
 
-import SalesDashboard from './components/sales-dashboard/index2'
+import SalesDashboard from './components/sales-dashboard/dashboard'
 // import TableWithDropdown from './components/table'
 
 
@@ -11,7 +10,6 @@ function App() {
     <div className='flex justify-center'>
       <div className=' h-full w-3/4'>
         <SalesDashboard />
-        {/* <TableWithDropdown /> */}
       </div>
     </div>
     // </div >
